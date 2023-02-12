@@ -9,9 +9,9 @@
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
     <groupId>com.sas</groupId>
-    <artifactId>spring-boot-excel-download</artifactId>
+    <artifactId>spring-boot-excel</artifactId>
     <version>1.0.1</version>
-    <name>spring-boot-excel-download</name>
+    <name>spring-boot-excel</name>
     <description>Demo project for Spring Boot</description>
     <properties>
         <java.version>11</java.version>
