@@ -1,4 +1,4 @@
-package com.sas.springbootexceldownload.entity;
+package com.hussain.response;
 
 import lombok.*;
 

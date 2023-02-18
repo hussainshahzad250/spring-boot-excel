@@ -1,8 +1,8 @@
-package com.sas.springbootexceldownload.controller;
+package com.hussain.controller;
 
-import com.sas.springbootexceldownload.service.ExcelService;
-import com.sas.springbootexceldownload.utils.ContactDetails;
-import com.sas.springbootexceldownload.utils.EmployeeDetails;
+import com.hussain.service.ExcelService;
+import com.hussain.utils.ContactDetails;
+import com.hussain.utils.EmployeeDetails;
 import org.apache.poi.util.IOUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;

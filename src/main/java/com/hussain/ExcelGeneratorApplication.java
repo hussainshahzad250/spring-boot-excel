@@ -1,4 +1,4 @@
-package com.sas.springbootexceldownload;
+package com.hussain;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -7,10 +7,10 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
  * Shahzad Hussain
  */
 @SpringBootApplication
-public class SpringBootExcelDownloadApplication {
+public class ExcelGeneratorApplication {
 
     public static void main(String[] args) {
-        SpringApplication.run(SpringBootExcelDownloadApplication.class, args);
+        SpringApplication.run(ExcelGeneratorApplication.class, args);
     }
 
 }

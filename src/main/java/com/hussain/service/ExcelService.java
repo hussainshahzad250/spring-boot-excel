@@ -1,9 +1,8 @@
-package com.sas.springbootexceldownload.service;
+package com.hussain.service;
 
-import com.sas.springbootexceldownload.entity.Contact;
-import com.sas.springbootexceldownload.entity.Employee;
-import com.sas.springbootexceldownload.utils.ContactDetails;
-import com.sas.springbootexceldownload.utils.EmployeeDetails;
+import com.hussain.response.Contact;
+import com.hussain.response.Employee;
+import com.hussain.utils.ContactDetails;
 import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.stereotype.Service;
