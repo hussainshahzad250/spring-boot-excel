@@ -3,3 +3,22 @@ server:
 spring:
   application:
     name: spring-boot-excel
+  datasource:
+    url: jdbc:mysql://localhost:3306/dev?useSSL=false
+    username: root
+    password: P@ssw0rd
+    hikari:
+      maximum-pool-size: 50
+    initialization-mode: always
+  jpa:
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.MySQL5InnoDBDialect
+        enable_lazy_load_no_trans: true
+        proc:
+          param_null_passing: true
+    hibernate:
+      ddl-auto: update
+      use_sql_comments: true
+      format_sql: true
+      show-sql: true
