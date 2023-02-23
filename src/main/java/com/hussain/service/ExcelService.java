@@ -2,7 +2,7 @@ package com.hussain.service;
 
 import com.hussain.response.Contact;
 import com.hussain.response.Employee;
-import com.hussain.utils.ContactDetails;
+import com.hussain.converter.ContactDetails;
 import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.stereotype.Service;

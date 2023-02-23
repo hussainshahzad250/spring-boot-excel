@@ -6,15 +6,16 @@ import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.xssf.streaming.SXSSFSheet;
 import org.apache.poi.xssf.streaming.SXSSFWorkbook;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.stereotype.Component;
 
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
+import java.io.*;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Component
 public class ExcelUtil {
@@ -25,10 +26,69 @@ public class ExcelUtil {
         return s.substring(0, 1).toUpperCase() + s.substring(1);
     }
 
+    public <T> ByteArrayInputStream writeToExcel(List<T> data) {
+        try (ByteArrayOutputStream outputStream = new ByteArrayOutputStream(); XSSFWorkbook workbook = new XSSFWorkbook()) {
+            Sheet sheet = workbook.createSheet();
+            List<String> fieldNames = getFieldNamesForClass(data.get(0).getClass());
+            int rowCount = 0;
+            int columnCount = 0;
+            Row row = sheet.createRow(rowCount++);
+            for (String fieldName : fieldNames) {
+                Cell cell = row.createCell(columnCount++);
+                cell.setCellValue(fieldName);
+            }
+            Class<? extends Object> classz = data.get(0).getClass();
+            for (T t : data) {
+                row = sheet.createRow(rowCount++);
+                columnCount = 0;
+                for (String fieldName : fieldNames) {
+                    Cell cell = row.createCell(columnCount);
+                    Method method = null;
+                    try {
+                        method = classz.getMethod("get" + capitalize(fieldName));
+                    } catch (NoSuchMethodException nme) {
+                        method = classz.getMethod("get" + fieldName);
+                    }
+                    Object value = method.invoke(t, (Object[]) null);
+                    if (value != null) {
+                        if (value instanceof String) {
+                            cell.setCellValue((String) value);
+                        } else if (value instanceof Long) {
+                            cell.setCellValue((Long) value);
+                        } else if (value instanceof Integer) {
+                            cell.setCellValue((Integer) value);
+                        } else if (value instanceof Double) {
+                            cell.setCellValue((Double) value);
+                        }
+                    }
+                    columnCount++;
+                }
+            }
+            workbook.write(outputStream);
+            return new ByteArrayInputStream(outputStream.toByteArray());
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    private static List<String> getFieldNamesForClass(Class<?> clazz) {
+        List<String> fieldNames = new ArrayList<String>();
+        Field[] fields = clazz.getDeclaredFields();
+        for (int i = 0; i < fields.length; i++) {
+            fieldNames.add(fields[i].getName());
+        }
+        return fieldNames.stream().map(o -> o.substring(0, 1).toUpperCase() + o.substring(1)).collect(Collectors.toList());
+    }
+
+    private static String capitalize(String s) {
+        if (s.length() == 0)
+            return s;
+        return s.substring(0, 1).toUpperCase() + s.substring(1);
+    }
+
     public ByteArrayInputStream writeExcelManualFlush(List<ExcelVo> excelData) throws IOException, InvocationTargetException, IllegalAccessException, NoSuchMethodException {
-        SXSSFWorkbook wb = null;
-        try (ByteArrayOutputStream outputStream = new ByteArrayOutputStream()) {
-            wb = new SXSSFWorkbook(-1);
+        try (ByteArrayOutputStream outputStream = new ByteArrayOutputStream(); SXSSFWorkbook wb = new SXSSFWorkbook(-1)) {
             Sheet sh = wb.createSheet();
             Class<ExcelVo> classz = (Class<ExcelVo>) excelData.get(0).getClass();
             Field[] fields = classz.getDeclaredFields();
@@ -68,10 +128,8 @@ public class ExcelUtil {
     }
 
     public ByteArrayInputStream writeExcelAutoFlush(List<ExcelVo> excelData) throws IOException, NoSuchMethodException, InvocationTargetException, IllegalAccessException {
-        SXSSFWorkbook wb = null;
-        try (ByteArrayOutputStream outputStream = new ByteArrayOutputStream()) {
+        try (ByteArrayOutputStream outputStream = new ByteArrayOutputStream(); SXSSFWorkbook wb = new SXSSFWorkbook(SXSSFWorkbook.DEFAULT_WINDOW_SIZE)) {
             // keep 100 rows in memory, exceeding rows will be flushed to disk
-            wb = new SXSSFWorkbook(SXSSFWorkbook.DEFAULT_WINDOW_SIZE);
             Sheet sh = wb.createSheet();
             Class<ExcelVo> classZ = (Class<ExcelVo>) excelData.get(0).getClass();
             Field[] fields = classZ.getDeclaredFields();
@@ -103,10 +161,7 @@ public class ExcelUtil {
             }
             wb.write(outputStream);
             return new ByteArrayInputStream(outputStream.toByteArray());
-        } finally {
-            if (wb != null) {
-                wb.close();
-            }
         }
     }
+
 }

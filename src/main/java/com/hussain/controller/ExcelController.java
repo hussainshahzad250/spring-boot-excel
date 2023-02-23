@@ -1,8 +1,8 @@
 package com.hussain.controller;
 
 import com.hussain.service.ExcelService;
-import com.hussain.utils.ContactDetails;
-import com.hussain.utils.EmployeeDetails;
+import com.hussain.converter.ContactDetails;
+import com.hussain.converter.EmployeeDetails;
 import org.apache.poi.util.IOUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;

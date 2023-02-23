@@ -1,7 +1,9 @@
 package com.hussain.controller;
 
 import com.hussain.converter.ExcelMockData;
+import com.hussain.converter.PersonDetails;
 import com.hussain.response.ExcelVo;
+import com.hussain.response.Person;
 import com.hussain.utils.ExcelUtil;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -29,6 +31,7 @@ public class ExcelGeneratorController {
 
     @GetMapping("/writeExcelManualFlush")
     public void writeExcelManualFlush(HttpServletResponse response) throws IOException, InvocationTargetException, IllegalAccessException, NoSuchMethodException {
+        log.info("Request initiated to download file");
         final long startTime = System.currentTimeMillis();
         List<ExcelVo> excelData = mockData.getExcelData();
         ByteArrayInputStream stream = excelUtil.writeExcelManualFlush(excelData);
@@ -51,6 +54,7 @@ public class ExcelGeneratorController {
 
     @GetMapping("/writeExcelAutoFlush")
     public void writeExcelAutoFlush(HttpServletResponse response) throws IOException, InvocationTargetException, IllegalAccessException, NoSuchMethodException {
+        log.info("Request initiated to download file");
         final long startTime = System.currentTimeMillis();
         List<ExcelVo> excelData = mockData.getExcelData();
         ByteArrayInputStream stream = excelUtil.writeExcelAutoFlush(excelData);
@@ -72,4 +76,56 @@ public class ExcelGeneratorController {
                 "Total time taken to execute 20000 records using auto flush: %d Hours %d Minutes %d Seconds %d Milliseconds",
                 hr, min, sec, ms));
     }
+
+
+    @GetMapping("/excelData")
+    public void excelData(HttpServletResponse response) throws IOException, InvocationTargetException, IllegalAccessException, NoSuchMethodException {
+        log.info("Request initiated to download file");
+        final long startTime = System.currentTimeMillis();
+        List<ExcelVo> excelData = mockData.getExcelData();
+        ByteArrayInputStream stream = excelUtil.writeToExcel(excelData);
+        response.setContentType("application/octet-stream");
+        response.setHeader("Content-Disposition", "attachment; filename=excel_data.xlsx");
+        IOUtils.copy(stream, response.getOutputStream());
+
+        final long endTime = System.currentTimeMillis();
+        final long totalTime = endTime - startTime;
+        final long hr = TimeUnit.MILLISECONDS.toHours(totalTime);
+        final long min = TimeUnit.MILLISECONDS.toMinutes(totalTime)
+                - TimeUnit.HOURS.toMinutes(TimeUnit.MILLISECONDS.toHours(totalTime));
+        final long sec = TimeUnit.MILLISECONDS.toSeconds(totalTime)
+                - TimeUnit.MINUTES.toSeconds(TimeUnit.MILLISECONDS.toMinutes(totalTime));
+        final long ms = TimeUnit.MILLISECONDS.toMillis(totalTime)
+                - TimeUnit.SECONDS.toMillis(TimeUnit.MILLISECONDS.toSeconds(totalTime));
+
+        System.out.println(String.format(
+                "Total time taken to execute 20000 records using genericway : %d Hours %d Minutes %d Seconds %d Milliseconds",
+                hr, min, sec, ms));
+    }
+
+    @GetMapping("/personDetails")
+    public void downloadPersonDetails(HttpServletResponse response) throws IOException, InvocationTargetException, IllegalAccessException, NoSuchMethodException {
+        log.info("Request initiated to download file");
+        final long startTime = System.currentTimeMillis();
+        List<Person> persons = PersonDetails.getPersons();
+        ByteArrayInputStream stream = excelUtil.writeToExcel(persons);
+        response.setContentType("application/octet-stream");
+        response.setHeader("Content-Disposition", "attachment; filename=person.xlsx");
+        IOUtils.copy(stream, response.getOutputStream());
+
+        final long endTime = System.currentTimeMillis();
+        final long totalTime = endTime - startTime;
+        final long hr = TimeUnit.MILLISECONDS.toHours(totalTime);
+        final long min = TimeUnit.MILLISECONDS.toMinutes(totalTime)
+                - TimeUnit.HOURS.toMinutes(TimeUnit.MILLISECONDS.toHours(totalTime));
+        final long sec = TimeUnit.MILLISECONDS.toSeconds(totalTime)
+                - TimeUnit.MINUTES.toSeconds(TimeUnit.MILLISECONDS.toMinutes(totalTime));
+        final long ms = TimeUnit.MILLISECONDS.toMillis(totalTime)
+                - TimeUnit.SECONDS.toMillis(TimeUnit.MILLISECONDS.toSeconds(totalTime));
+
+        System.out.println(String.format(
+                "Total time taken to execute person details: %d Hours %d Minutes %d Seconds %d Milliseconds",
+                hr, min, sec, ms));
+    }
+
 }
